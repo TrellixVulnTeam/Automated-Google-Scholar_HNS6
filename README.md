@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project aims to automate downlaoding research-works with Google Scholar. The process begins with a search of Google Scholar. The search results in a list of URLs linking to research-works. The URLs are then "scraped" of content such that bibliographic information is captured and, commonly, files containing the content of the research-work are also captured. If the content of the research-work cannot be captured automatically, the troublesome URL is flagged for manual handling by the user.
+This project aims to automate downloading research-works with Google Scholar. The process begins with a search of Google Scholar. The search results in a list of URLs linking to research-works. The URLs are then "scraped" of content such that bibliographic information is captured and, commonly, files containing the content of the research-work are also captured. If the content of the research-work cannot be captured automatically, the troublesome URL is flagged for manual handling by the user.
 
 This project attempts to fail-gracefully during the search of Google Scholar, attempting several different methods to capture Google Scholar search results. If no search results can be returned, then an informative error message is displayed. This approach was taken as extracting information from Google Scholar is commonly very difficult (Else, 2018; Haddaway et al., 2015; Martín-Martín et al., 2018).
 
@@ -15,6 +15,26 @@ Gathering knowledge is the cornerstone of research. For example, literature revi
 A poster on this project was presented at LSGSC 2021.
 
 Mattingly, P. (2021, November 13–14). Automating research with Google Scholar [Conference presentation]. 2021 Learning Sciences Graduate Student Conference, Virtual. https://sites.google.com/view/lsgsc2021/home
+
+## Technology Overview
+
+This project is written in Python. As previously mentioned, several methods are used to conduct a search of Google Scholar for each query. These methods are: SerpAPI (1), ScrapingAnt (2), and Searx (3). These methods were chosen as they appeared to have robust methods for searching Google Scholar, and they can be controlled via Python; SerpAPI and ScrapingAnt have API libraries (4 & 5), while Searx can be "patched" to be used. Docker is used throughout to provide various functionalities (6); A Searx server is ran in a docker container, and the “virtual desktop” used for scraping is a docker container. Also, the “Network Monitor” class instantiates a docker container to monitor network traffic during sensitive operations. More specifically, the scraping aspect of the project, uses a docker container running Ubuntu (7 & 8). This container also has Firefox and Zotero installed to carry out the scraping. The scraping automation is done with the help of the `pyautogui` library (9).
+
+1)	https://serpapi.com/
+2)	https://scrapingant.com/
+3)	https://searx.github.io/searx/
+4)	https://github.com/serpapi/google-search-results-python
+5)	https://github.com/ScrapingAnt/scrapingant-client-python
+6)	https://www.docker.com/
+7)	https://ubuntu.com/
+8)	https://hub.docker.com/r/accetto/ubuntu-vnc-xfce-firefox-g3
+9)	https://pyautogui.readthedocs.io/en/latest/
+
+## Code Discussion
+
+All of the code can be found in the `lib` directory. The main entry point for the program is in the `scraping` directory, specifically the `scraping_helper` module. This module allows a user to submit a query, which is then search for on Google Scholar, then all returned pages are iterated over, and each research-work is attempted to be scraped for its content.
+
+Other code is partitioned by purpose. Code having to do with searching Google Scholar is in the `search` directory. Classes that interact with Docker are in the `docker` directory.  Code for using Zotero to scrape research-work information is in `zoteroing`. The `service_share` directory contains files and directories intended to be shared with docker containers carrying out various functions in the program; see https://docs.docker.com/storage/volumes/. There a few miscellaneous utility files in the root of `lib`; `exceptions` contains custom exceptions, `logging` contains logging infrastructure, `util` contains various utility functions. The `Network_Monitor_Helper` module contains functionality to launch a docker container to monitor network uptime during sensitive operations.
 
 ## References
 
